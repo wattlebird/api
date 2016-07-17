@@ -1,16 +1,17 @@
 import random
 
 class SuffixArrayInterface(object):
-    def __init__(self, namestr):
+    def __init__(self, namestr, value=None):
         if namestr:
             self.breakchar = namestr[-1]
         else:
-            self.breakchar = '$'
-            namestr='$'
+            self.breakchar = u'$'
+            namestr=u'$'
         self.namestr = namestr
 
         strptr = []
         idxtable = []
+        key = []
         idx = 0
         for i in xrange(len(namestr)):
             if namestr[i]!=self.breakchar:
@@ -18,10 +19,16 @@ class SuffixArrayInterface(object):
                 idxtable.append(idx)
             else:
                 idxtable.append(-1)
+                key.append(idx);
                 idx=i+1
         self.strptr = strptr
         self.idxtable = idxtable
         self.sorted = False
+        if value is not None:
+            assert(len(value)==len(key))
+            self.table = dict(zip(key, value))
+        else:
+            self.table = None
 
     def _strcomp(self, i, j):
         """
@@ -64,14 +71,10 @@ class SuffixArrayInterface(object):
             else:
                 return -1
 
-        if self.namestr[i]==self.breakchar and self.namestr[i]==s[j]:
+        if s[j]==self.breakchar:
             return 0
-        elif s[j]==self.breakchar:
-            return -1
-        elif self.namestr[i]==self.breakchar:
-            return 1
         else:
-            raise
+            return 1
 
     def _qsort(self, x):
         if len(x)<=1: return
@@ -131,10 +134,14 @@ class SuffixArrayInterface(object):
         b = self._lower_bound(q+self.breakchar)
         e = self._upper_bound(q+self.breakchar)
         if e<=b:
+            if self.table is not None:
+                return [],[]
             return []
 
         rtn = [self.idxtable[self.strptr[i]] for i in xrange(b, e)]
         rtn = list(set(rtn))
+        if self.table is not None:
+            return rtn, [self.table[itm] for itm in rtn]
         return rtn
 
     def build(self):

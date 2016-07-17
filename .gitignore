@@ -62,3 +62,10 @@ target/
 
 #PyCharm
 .idea
+
+#VSCode
+.vscode
+
+#data
+*.hdf
+*.pkl
