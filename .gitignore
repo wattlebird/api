@@ -69,3 +69,7 @@ target/
 #data
 *.hdf
 *.pkl
+*.db
+
+# instance
+instance/

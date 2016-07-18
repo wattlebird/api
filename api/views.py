@@ -1,30 +1,28 @@
 # -*- coding: utf-8 -*-
 from flask import jsonify, request
-from rank import retrive
-from user import queryuser
+from ranker import retrive
+from query import queryuser
 from api import app
 
 @app.route('/search')
 def search():
     query = request.args.get('q', default=u'')
     limit = request.args.get('limit', default=None, type=int)
-    return jsonify({'search':'anime',
+    return jsonify({'search':"user",
                     'query':query,
-                    'result':queryuser(query, limit)})
+                    'result':queryuser(q, limit)})
 
 
 @app.route('/rank')
 def rank():
-    sort = request.args.get('by', default='id')
-    if sort=='bangumi':
-        sort = 'bangumi_rank'
-    b = request.args.get('start', default=0, type=int)
-    e = request.args.get('end', default=-1, type=int)
+    method = request.args.get('by', default='normal')
+    b = request.args.get('start', default=1, type=int)
+    r = request.args.get('range', default=None, type=int)
     id = request.args.get('id', default=None, type=int)
-    if id is not None:
-        s = retrive(rank=rank, range_begin=b-1, range_end=e)
+    if id is None:
+        s = retrive(method, bg=b-1, rg=r)
     else:
-        s = retrive(rank=rank, range_begin=id-1, range_end=id)
-    return jsonify({'rank':'anime',
-                    'date':2016-07-03,
+        s = retrive(method, bg=id-1, rg=1)
+    return jsonify({'rank':method,
+                    'date':"2016-07-03",
                     'list':s})
