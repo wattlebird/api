@@ -14,6 +14,8 @@ def queryuser(q, limit=10):
     _, idx1 = idquery.query(q)
     _, idx2 = nicknamequery.query(q)
     idx = list(set(idx1 + idx2))
+    if len(idx)>999:
+        idx = idx[:999]
     rst = db_session.query(User.id, User.nickname).filter(User.index.in_(idx)).\
           order_by(User.score.desc(), User.active.asc()).limit(limit).all()
     return [{'id':itm[0], 'name':itm[1]} for itm in rst]
